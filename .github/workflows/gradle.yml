@@ -53,9 +53,9 @@ jobs:
       run: aws s3 cp --region ap-northeast-2 ./todo.zip s3://mignon-cicd-bucket/todo.zip
 
     # CodeDeploy 에 배포 명령
-    - name: Code Deploy
-      run: >
-        --application-name mignon-cicd
+    - name: Code Deploy To EC2 instance
+      run: aws deploy create-deployment
+          --application-name mignon-cicd
         --deployment-config-name CodeDeployDefault.AllAtOnce
         --deployment-group-name mignon-cicd-group
         --s3-location bucket=mignon-cicd-bucket,bundleType=zip,key=todo.zip
