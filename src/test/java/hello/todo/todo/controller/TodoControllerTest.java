@@ -45,7 +45,7 @@ class TodoControllerTest {
     private Gson gson;
 
     @Test
-    public void postMemberTest() throws Exception {
+    void postTodoTest() throws Exception {
         // given
         TodoPostDto post = new TodoPostDto("밥먹기", 1, false);
         String content = gson.toJson(post);
@@ -92,6 +92,11 @@ class TodoControllerTest {
                                 fieldWithPath("completed").type(JsonFieldType.BOOLEAN).description("완료여부")
                         )
                 ));
+    }
+
+    @Test
+    void patchTodoTest() {
+        // TODO 컨트롤러 테스트 코드 및 rest docs api 코드 작성하기
     }
 
 }
