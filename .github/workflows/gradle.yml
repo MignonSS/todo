@@ -28,7 +28,34 @@ jobs:
       with:
         java-version: '11'
         distribution: 'temurin'
+    - name: Add permission
+      run: chmod +x gradlew
     - name: Build with Gradle
       uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
       with:
         arguments: build
+
+    # build 후 프로젝트 압축
+    - name: Make zip file
+      run: zip -r ./todo.zip .
+      shell: bash
+
+    # Access Key와 Secret Access Key를 통해 권한 확인
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ap-northeast-2
+
+    # 압축한 프로젝트를 S3로 전송
+    - name: Upload to S3
+      run: aws s3 cp --region ap-northeast-2 ./todo.zip s3://mignon-cicd-bucket/todo.zip
+
+    # CodeDeploy 에 배포 명령
+    - name: Code Deploy
+      run: >
+        --application-name mignon-cicd
+        --deployment-config-name CodeDeployDefault.AllAtOnce
+        --deployment-group-name mignon-cicd-group
+        --s3-location bucket=mignon-cicd-bucket,bundleType=zip,key=todo.zip
